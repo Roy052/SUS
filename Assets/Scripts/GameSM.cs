@@ -8,15 +8,17 @@ public class GameSM : MonoBehaviour
 {
     const float MaxSecond = 20f;
 
-    public DataManager dataManager;
     public Text textGameStatus;
     public List<Obstacle> obstacles;
 
+    public GameObject objFail;
+    public GameObject objSuccess;
+    public GameObject objEnd;
+
+    bool isGameEnd = false;
     private void Start()
     {
-
         StartCoroutine(Co_Game());
-
     }
 
     IEnumerator Co_Game()
@@ -30,15 +32,34 @@ public class GameSM : MonoBehaviour
         int idx = 0;
         while (time <= MaxSecond)
         {
+            if (idx >= randomIdxList.Count)
+                break;
+
             int currentIdx = randomIdxList[idx];
-            obstacles[currentIdx].Set(dataManager.obstacleDatas[currentIdx]);
-            if(time + obstacles[currentIdx].GetShowTime(xSpeed) > MaxSecond)
+            obstacles[currentIdx].Set(DataManager.obstacleDatas[currentIdx]);
+
+            float currentTime = obstacles[currentIdx].GetShowTime(xSpeed);
+            if (time + currentTime <= MaxSecond)
             {
                 idx++;
+                obstacles[currentIdx].Show(xSpeed);
+                time += currentTime;
+                yield return new WaitForSeconds(currentTime);
                 continue;
             }    
             yield return null;
             currentIdx++;
+
+            if (isGameEnd)
+                yield break;
         }
+    }
+
+    public void GameFail()
+    {
+        isGameEnd = true;
+        Debug.Log(isGameEnd);
+        //objFail.SetActive(true);
+        //objEnd.SetActive(true);
     }
 }

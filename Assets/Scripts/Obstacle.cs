@@ -1,16 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Obstacle : MonoBehaviour
+public class Obstacle : MonoBehaviour, IPointerEnterHandler
 {
     const float WaitTime = 0.5f;
     static readonly Color ShadowColor = new Color(0, 0, 0, 0.5f);
     static readonly Color NaturalColor = new Color(1f, 1f, 1f, 1f);
 
-    public RectTransform rect;
+    public GameSM gameSM;
     public ObstacleData data;
+
+    public List<Image> childs;
 
     public float GetShowTime(float xSpeed)
     {
@@ -18,6 +21,11 @@ public class Obstacle : MonoBehaviour
         foreach(var movement in data.movements)
             time += movement.time / xSpeed;
         return time;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        gameSM.GameFail();
     }
 
     public void Set(ObstacleData data)
@@ -39,9 +47,10 @@ public class Obstacle : MonoBehaviour
         {
             float time = 0;
             var currentData = data.movements[currentIdx];
-            Image currentImage = transform.GetChild(currentData.currentSiblingIdx).GetComponent<Image>();
+            Image currentImage = childs[currentData.currentChidIdx];
             currentImage.color = ShadowColor;
             currentImage.raycastTarget = false;
+            RectTransform rect = currentImage.rectTransform;
 
             switch (data.movements[currentIdx].type)
             {
@@ -52,6 +61,7 @@ public class Obstacle : MonoBehaviour
                     if (currentData.positions.Count < 2)
                         break;
 
+                    currentImage.SetActive(true);
                     Vector3 posStart = currentData.positions[0];
                     Vector3 posEnd = currentData.positions[1];
                     float moveTime = currentData.time / xSpeed;
@@ -63,7 +73,8 @@ public class Obstacle : MonoBehaviour
                     }
                     break;
                 case MovementType.Appear:
-
+                    currentImage.SetActive(true);
+                    yield return new WaitForSeconds(currentData.time / xSpeed);
                     break;
                 case MovementType.Spread:
                     break;
@@ -71,6 +82,9 @@ public class Obstacle : MonoBehaviour
 
             currentIdx++;
         }
+
+        foreach (var img in childs)
+            img.SetActive(false);
 
         yield return new WaitForSeconds(WaitTime / xSpeed);
 
@@ -80,9 +94,10 @@ public class Obstacle : MonoBehaviour
         {
             float time = 0;
             var currentData = data.movements[currentIdx];
-            Image currentImage = transform.GetChild(currentData.currentSiblingIdx).GetComponent<Image>();
+            Image currentImage = childs[currentData.currentChidIdx];
             currentImage.color = NaturalColor;
             currentImage.raycastTarget = true;
+            RectTransform rect = currentImage.rectTransform;
 
             switch (data.movements[currentIdx].type)
             {

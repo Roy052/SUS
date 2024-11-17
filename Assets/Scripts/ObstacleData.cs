@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 public enum MovementType
 {
+    Disable,
     Wait,
     Move,
     Appear,
     Spread,
-
 }
 
 public class ObstacleData : MonoBehaviour
@@ -19,7 +19,7 @@ public class ObstacleData : MonoBehaviour
 public class Movement
 {
     public MovementType type;
-    public int currentSiblingIdx;
+    public int currentChidIdx;
     public List<Vector3> positions = new List<Vector3>();
     public float time;
     public List<int> spreadCount = new List<int>();

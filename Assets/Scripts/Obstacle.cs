@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Obstacle : MonoBehaviour, IPointerEnterHandler
 {
-    const float WaitTime = 0.5f;
+    const float WaitTime = 1f;
     static readonly Color ShadowColor = new Color(0, 0, 0, 0.5f);
     static readonly Color NaturalColor = new Color(1f, 1f, 1f, 1f);
 
@@ -18,9 +18,10 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
     public float GetShowTime(float xSpeed)
     {
         float time = 0f;
-        foreach(var movement in data.movements)
-            time += movement.time / xSpeed;
-        return time;
+        foreach (var movement in data.movements)
+            time += movement.time;
+
+        return (time * 2 + WaitTime) / xSpeed;
     }
 
     public void OnPointerEnter(PointerEventData eventData)

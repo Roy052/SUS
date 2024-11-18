@@ -18,6 +18,7 @@ public class GameSM : MonoBehaviour
     bool isGameEnd = false;
     private void Start()
     {
+        objEnd.SetActive(false);
         StartCoroutine(Co_Game());
     }
 
@@ -59,7 +60,8 @@ public class GameSM : MonoBehaviour
     {
         isGameEnd = true;
         Debug.Log(isGameEnd);
-        //objFail.SetActive(true);
-        //objEnd.SetActive(true);
+        objEnd.SetActive(true);
+        objFail.SetActive(true);
+        objSuccess.SetActive(false);
     }
 }

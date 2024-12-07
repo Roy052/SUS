@@ -22,5 +22,7 @@ public class Movement
     public int currentChidIdx;
     public List<Vector3> positions = new List<Vector3>();
     public float time;
-    public List<int> spreadCount = new List<int>();
+    public int spreadCount;
+    public float spreadRadius;
+    public float spreadSpeed;
 }

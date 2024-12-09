@@ -29,5 +29,21 @@ public static class DataManager
                 },
             }
         },
+        new ObstacleData()
+        {
+            movements = new List<Movement>()
+            {
+                new Movement()
+                {
+                    type = MovementType.Spread,
+                    currentChidIdx = 0,
+                    positions = new List<Vector3>(){Vector3.zero },
+                    time = 0.5f,
+                    spreadCount = 8,
+                    spreadRadius = 2f,
+                    spreadSpeed = 25f,
+                }
+            }
+        }
     };
 }

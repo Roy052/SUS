@@ -60,19 +60,7 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
                     yield return new WaitForSeconds(currentData.time / xSpeed);
                     break;
                 case MovementType.Move:
-                    if (currentData.positions.Count < 2)
-                        break;
-
-                    currentImage.SetActive(true);
-                    Vector3 posStart = currentData.positions[0];
-                    Vector3 posEnd = currentData.positions[1];
-                    float moveTime = currentData.time / xSpeed;
-                    while (time < moveTime)
-                    {
-                        time += Time.deltaTime;
-                        rect.anchoredPosition = Vector3.Lerp(posStart, posEnd, time / moveTime);
-                        yield return null;
-                    }
+                    yield return StartCoroutine(Co_PatternMove(currentData, true, xSpeed));
                     break;
                 case MovementType.Appear:
                     currentImage.SetActive(true);
@@ -109,19 +97,7 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
                     yield return new WaitForSeconds(currentData.time / xSpeed);
                     break;
                 case MovementType.Move:
-                    if (currentData.positions.Count < 2)
-                        break;
-
-                    currentImage.SetActive(true);
-                    Vector3 posStart = currentData.positions[0];
-                    Vector3 posEnd = currentData.positions[1];
-                    float moveTime = currentData.time / xSpeed;
-                    while (time < moveTime)
-                    {
-                        time += Time.deltaTime;
-                        rect.anchoredPosition = Vector3.Lerp(posStart, posEnd, time / moveTime);
-                        yield return null;
-                    }
+                    yield return StartCoroutine(Co_PatternMove(currentData, false, xSpeed));
                     break;
                 case MovementType.Appear:
                     currentImage.SetActive(true);
@@ -134,6 +110,28 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
             }
 
             currentIdx++;
+        }
+    }
+
+    IEnumerator Co_PatternMove(Movement data, bool isShadow, float xSpeed)
+    {
+        if (data.positions.Count < 2)
+            yield break;
+        
+        Image currentImage = childs[data.currentChidIdx];
+        currentImage.color = isShadow ? ShadowColor : NaturalColor;
+        currentImage.raycastTarget = isShadow == false;
+        RectTransform rect = currentImage.rectTransform;
+        currentImage.SetActive(true);
+        Vector3 posStart = data.positions[0];
+        Vector3 posEnd = data.positions[1];
+        float moveTime = data.time / xSpeed;
+        float time = 0f;
+        while (time < moveTime)
+        {
+            time += Time.deltaTime;
+            rect.anchoredPosition = Vector3.Lerp(posStart, posEnd, time / moveTime);
+            yield return null;
         }
     }
 
@@ -162,6 +160,7 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
 
             // GameObject 생성
             GameObject obj = Instantiate(currentImage.gameObject, position, Quaternion.identity);
+            obj.SetActive(true);
 
             // 해당 방향으로 회전 (위쪽을 이동 방향으로 설정)
             float degrees = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;

@@ -133,10 +133,12 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
             rect.anchoredPosition = Vector3.Lerp(posStart, posEnd, time / moveTime);
             yield return null;
         }
+        currentImage.SetActive(false);
     }
 
     private List<GameObject> spreadObjects = new List<GameObject>();
     private List<float> spreadSpeeds = new List<float>();
+    private List<Vector3> spreadCenters = new List<Vector3>();
 
     IEnumerator Co_Spread(Movement data, bool isShadow)
     {
@@ -153,13 +155,16 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
             float angle = i * Mathf.PI * 2 / objectCount;
 
             // 위치 계산 - 중심에서 radius 만큼 떨어진 위치에 배치
-            Vector3 position = transform.position + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * data.spreadRadius;
+            Vector3 dataPos = (transform as RectTransform).TransformPoint(data.positions[0]);
+            dataPos.z = 0;
+            Vector3 position = transform.position + dataPos + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * data.spreadRadius;
+            Debug.Log((transform as RectTransform).TransformPoint(data.positions[0]));
 
             // 이동 방향 계산 (중심에서 바깥쪽으로)
             Vector3 direction = (position - transform.position).normalized;
 
             // GameObject 생성
-            GameObject obj = Instantiate(currentImage.gameObject, position, Quaternion.identity);
+            GameObject obj = Instantiate(currentImage.gameObject, position, Quaternion.identity, currentImage.transform.parent);
             obj.SetActive(true);
 
             // 해당 방향으로 회전 (위쪽을 이동 방향으로 설정)
@@ -169,6 +174,7 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
             // 리스트에 추가
             spreadObjects.Add(obj);
             spreadSpeeds.Add(data.spreadSpeed);
+            spreadCenters.Add(dataPos);
         }
     }
 
@@ -179,7 +185,9 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
             GameObject obj = spreadObjects[i];
 
             // 이동 방향 계산 (중심에서 바깥쪽으로)
-            Vector3 direction = (obj.transform.position - transform.position).normalized;
+            Vector3 currentPos = obj.transform.position;
+            currentPos.z = 0;
+            Vector3 direction = (currentPos - spreadCenters[i]).normalized;
 
             // 해당 방향으로 이동
             obj.transform.position += direction * spreadSpeeds[i] * Time.deltaTime;
@@ -194,6 +202,7 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
                 Destroy(obj);
                 spreadObjects.RemoveAt(i);
                 spreadSpeeds.RemoveAt(i);
+                spreadCenters.RemoveAt(i);
             }
         }
     }

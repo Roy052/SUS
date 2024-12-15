@@ -8,6 +8,8 @@ public class GameSM : MonoBehaviour
 {
     const float MaxSecond = 20f;
 
+    public Image imgBack;
+
     public Text textGameStatus;
     public List<Obstacle> obstacles;
 
@@ -16,7 +18,8 @@ public class GameSM : MonoBehaviour
     public GameObject objEnd;
 
     bool isGameEnd = false;
-    private void Start()
+
+    public void StartGame()
     {
         objEnd.SetActive(false);
         StartCoroutine(Co_Game());
@@ -24,6 +27,8 @@ public class GameSM : MonoBehaviour
 
     IEnumerator Co_Game()
     {
+        yield return StartCoroutine(UIEffect.FadeIn(imgBack, 0.5f));
+
         float xSpeed = 1f;
         float time = 0f;
 

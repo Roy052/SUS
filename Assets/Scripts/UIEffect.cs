@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FadeManager : MonoBehaviour
+public class UIEffect
 {
     public static IEnumerator FadeIn(SpriteRenderer spriteRenderer, float time)
     {

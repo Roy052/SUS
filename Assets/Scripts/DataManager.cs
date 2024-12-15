@@ -37,13 +37,49 @@ public static class DataManager
                 {
                     type = MovementType.Spread,
                     currentChidIdx = 0,
-                    positions = new List<Vector3>(){Vector3.zero },
+                    positions = new List<Vector3>(){ new Vector3(-480f, 270f) },
                     time = 0.5f,
                     spreadCount = 8,
                     spreadRadius = 2f,
-                    spreadSpeed = 25f,
-                }
+                    spreadSpeed = 15f,
+                },
+                new Movement()
+                {
+                    type = MovementType.Wait,
+                    time = 0.5f
+                },
+                new Movement()
+                {
+                    type = MovementType.Spread,
+                    currentChidIdx = 0,
+                    positions = new List<Vector3>(){ new Vector3(480f, 0) },
+                    time = 0.5f,
+                    spreadCount = 8,
+                    spreadRadius = 2f,
+                    spreadSpeed = 15f,
+                },
+                new Movement()
+                {
+                    type = MovementType.Wait,
+                    time = 0.5f
+                },
+                new Movement()
+                {
+                    type = MovementType.Spread,
+                    currentChidIdx = 0,
+                    positions = new List<Vector3>(){ new Vector3(0, -270f) },
+                    time = 0.5f,
+                    spreadCount = 8,
+                    spreadRadius = 2f,
+                    spreadSpeed = 15f,
+                },
+                new Movement()
+                {
+                    type = MovementType.Wait,
+                    time = 0.5f
+                },
             }
         }
+        
     };
 }

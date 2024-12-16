@@ -8,6 +8,7 @@ public enum MovementType
     Move,
     Appear,
     Spread,
+    Explode,
 }
 
 public class ObstacleData : MonoBehaviour
@@ -25,4 +26,5 @@ public class Movement
     public int spreadCount;
     public float spreadRadius;
     public float spreadSpeed;
+    public SFXType sfxType;
 }

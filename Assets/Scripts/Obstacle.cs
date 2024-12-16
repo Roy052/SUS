@@ -67,7 +67,11 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
                     yield return new WaitForSeconds(currentData.time / xSpeed);
                     break;
                 case MovementType.Spread:
-                    StartCoroutine(Co_Spread(currentData, true));
+                    StartCoroutine(Co_PatternSpread(currentData, true));
+                    yield return new WaitForSeconds(currentData.time / xSpeed);
+                    break;
+                case MovementType.Explode:
+                    StartCoroutine(Co_PatternExplode(currentData, true));
                     yield return new WaitForSeconds(currentData.time / xSpeed);
                     break;
             }
@@ -104,7 +108,11 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
                     yield return new WaitForSeconds(currentData.time / xSpeed);
                     break;
                 case MovementType.Spread:
-                    StartCoroutine(Co_Spread(currentData, false));
+                    StartCoroutine(Co_PatternSpread(currentData, false));
+                    yield return new WaitForSeconds(currentData.time / xSpeed);
+                    break;
+                case MovementType.Explode:
+                    StartCoroutine(Co_PatternExplode(currentData, false));
                     yield return new WaitForSeconds(currentData.time / xSpeed);
                     break;
             }
@@ -140,7 +148,7 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
     private List<float> spreadSpeeds = new List<float>();
     private List<Vector3> spreadCenters = new List<Vector3>();
 
-    IEnumerator Co_Spread(Movement data, bool isShadow)
+    IEnumerator Co_PatternSpread(Movement data, bool isShadow)
     {
         yield return null;
         mainCamera = Camera.main;
@@ -176,6 +184,22 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
             spreadSpeeds.Add(data.spreadSpeed);
             spreadCenters.Add(dataPos);
         }
+    }
+
+    IEnumerator Co_PatternExplode(Movement data, bool isShadow)
+    {
+        yield return null;
+        mainCamera = Camera.main;
+        Image currentImage = childs[data.currentChidIdx];
+        currentImage.color = isShadow ? ShadowColor : NaturalColor;
+        currentImage.raycastTarget = isShadow == false;
+        currentImage.SetActive(true);
+
+        yield return new WaitForSeconds(data.time);
+        Image explodeImage = childs[data.currentChidIdx].transform.GetChild(0).GetComponent<Image>();
+        explodeImage.color = isShadow ? ShadowColor : NaturalColor;
+        explodeImage.raycastTarget = isShadow == false;
+        explodeImage.SetActive(true);
     }
 
     void Update()

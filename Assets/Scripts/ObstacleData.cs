@@ -9,6 +9,7 @@ public enum MovementType
     Appear,
     Spread,
     Explode,
+    Chase,
 }
 
 public class ObstacleData : MonoBehaviour
@@ -22,6 +23,8 @@ public class Movement
     public MovementType type;
     public int currentChidIdx;
     public List<Vector3> positions = new List<Vector3>();
+    public bool isEndRandomX;
+    public bool isEndRandomY;
     public float time;
     public int spreadCount;
     public float spreadRadius;

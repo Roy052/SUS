@@ -79,6 +79,80 @@ public static class DataManager
                     time = 0.5f
                 },
             }
+        },
+        //Bomb
+        new ObstacleData()
+        {
+            movements = new List<Movement>()
+            {
+                new Movement()
+                {
+                    type = MovementType.Move,
+                    currentChidIdx = 0,
+                    positions = new List<Vector3>(){ new Vector3(-760, -540), new Vector3(-760, 160),},
+                    isEndRandomY = true,
+                    time = 1f,
+                },
+                new Movement()
+                {
+                    type = MovementType.Move,
+                    currentChidIdx = 1,
+                    positions = new List<Vector3>(){ new Vector3(0, -540), new Vector3(0, 0),},
+                    isEndRandomY = true,
+                    time = 1f,
+                },
+                new Movement()
+                {
+                    type = MovementType.Move,
+                    currentChidIdx = 2,
+                    positions = new List<Vector3>(){ new Vector3(760, -540), new Vector3(760, -160),},
+                    isEndRandomY = true,
+                    time = 1f,
+                },
+                new Movement()
+                {
+                    type = MovementType.Explode,
+                    currentChidIdx = 0,
+                    time = 0.5f,
+                },
+                new Movement()
+                {
+                    type = MovementType.Explode,
+                    currentChidIdx = 1,
+                    time = 0.5f,
+                },
+                new Movement()
+                {
+                    type = MovementType.Explode,
+                    currentChidIdx = 2,
+                    time = 0.5f,
+                }
+            }
+        },
+        //Pheonix
+        new ObstacleData()
+        {
+            movements = new List<Movement>()
+            {
+                new Movement()
+                {
+                    type = MovementType.Move,
+                    currentChidIdx = 0,
+                    positions = new List<Vector3>(){ new Vector3(960f, 0), new Vector3(-960f, 0)},
+                    time = 2f,
+                },
+                new Movement()
+                {
+                    type = MovementType.Wait,
+                    time = 0.5f
+                },
+                new Movement()
+                {
+                    type = MovementType.Appear,
+                    currentChidIdx = 1,
+                    time = 0.5f,
+                },
+            }
         }
         
     };

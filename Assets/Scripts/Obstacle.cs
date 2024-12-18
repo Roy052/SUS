@@ -16,6 +16,8 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
     public List<Image> childs;
     public Camera mainCamera;
 
+
+
     public float GetShowTime(float xSpeed)
     {
         float time = 0f;
@@ -54,6 +56,12 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
             currentImage.raycastTarget = false;
             RectTransform rect = currentImage.rectTransform;
 
+            if (currentData.isEndRandomX)
+                posEndRandomXList.Add(Random.Range(-960f, 960f));
+
+            if (currentData.isEndRandomY)
+                posEndRandomYList.Add(Random.Range(-540f, 540f));
+
             switch (data.movements[currentIdx].type)
             {
                 case MovementType.Wait:
@@ -74,6 +82,10 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
                     StartCoroutine(Co_PatternExplode(currentData, true));
                     yield return new WaitForSeconds(currentData.time / xSpeed);
                     break;
+                case MovementType.Chase:
+                    StartCoroutine(Co_PatternChase(currentData, true));
+                    yield return new WaitForSeconds(currentData.time / xSpeed);
+                    break;
             }
 
             currentIdx++;
@@ -85,6 +97,8 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
         yield return new WaitForSeconds(WaitTime / xSpeed);
 
         currentIdx = 0;
+        randomIdx = 0;
+
         //Real
         while (currentIdx < data.movements.Count)
         {
@@ -115,12 +129,19 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
                     StartCoroutine(Co_PatternExplode(currentData, false));
                     yield return new WaitForSeconds(currentData.time / xSpeed);
                     break;
+                case MovementType.Chase:
+                    StartCoroutine(Co_PatternChase(currentData, false));
+                    yield return new WaitForSeconds(currentData.time / xSpeed);
+                    break;
             }
 
             currentIdx++;
         }
     }
 
+    int randomIdx = 0;
+    List<float> posEndRandomXList = new();
+    List<float> posEndRandomYList = new();
     IEnumerator Co_PatternMove(Movement data, bool isShadow, float xSpeed)
     {
         if (data.positions.Count < 2)
@@ -133,6 +154,12 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
         currentImage.SetActive(true);
         Vector3 posStart = data.positions[0];
         Vector3 posEnd = data.positions[1];
+        if (data.isEndRandomX || data.isEndRandomY)
+        {
+            posEnd.x = data.isEndRandomX ? posEndRandomXList[randomIdx] : posEnd.x;
+            posEnd.y = data.isEndRandomY ? posEndRandomYList[randomIdx] : posEnd.y;
+            randomIdx++;
+        }
         float moveTime = data.time / xSpeed;
         float time = 0f;
         while (time < moveTime)
@@ -200,6 +227,34 @@ public class Obstacle : MonoBehaviour, IPointerEnterHandler
         explodeImage.color = isShadow ? ShadowColor : NaturalColor;
         explodeImage.raycastTarget = isShadow == false;
         explodeImage.SetActive(true);
+    }
+
+    List<float> posEndChaseXList = new();
+    List<float> posEndChaseYList = new();
+    IEnumerator Co_PatternChase(Movement data, bool isShadow)
+    {
+        yield return null;
+        float time = 0f;
+        float endTime = data.time;
+        Image currentImage = childs[data.currentChidIdx];
+        currentImage.color = isShadow ? ShadowColor : NaturalColor;
+        currentImage.raycastTarget = isShadow == false;
+        currentImage.SetActive(true);
+        while (time < endTime)
+        {
+            Vector2 mousePosition;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                currentImage.canvas.transform as RectTransform,
+                Input.mousePosition,
+                currentImage.canvas.worldCamera, // Render Mode에 따라 카메라를 전달
+                out mousePosition
+            );
+
+            // UI 이미지 위치 설정
+            currentImage.rectTransform.localPosition = mousePosition;
+            time += Time.deltaTime;
+            yield return null;
+        }
     }
 
     void Update()
